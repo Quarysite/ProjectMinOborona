@@ -1,0 +1,279 @@
+#include<iostream>
+#include<fstream>
+#include<limits>
+#include<conio.h>
+#include<string>
+
+using namespace std;
+int GetIdForEdit();
+void Search(int a);
+
+struct Book
+{
+	static const int BUFFER_SIZE = 20;
+	int Id = 0;
+	char Title[BUFFER_SIZE];
+	char Author[BUFFER_SIZE];
+	float Price;
+	int Quantity;
+};
+const int BookDataSize = sizeof(Book);
+const std::string fileName = "books.bin";
+
+int main()
+{
+	cout << "chose one mode : " << endl << "1- add booklist;" << endl << "2-edit booklist(by id)" << endl << "3-search for booklist(by name)" << endl << "4-sort booklist(by author)" << endl << "5-statistics (quantity and price)" << endl << "0- exit the programm" << endl;
+	int mode = 0;
+	cin >> mode;
+	cin.ignore(numeric_limits<int>::max(), '\n');
+	if (mode == 1)
+	{
+		system("cls");
+
+		Book appBook;
+		cout << "You have chosen appadd mode, programm will automatically create new id for you." << endl;
+		appBook.Id = GetIdForEdit() + 1;
+		cout << "Enter the title : ";
+		cin >> appBook.Title;
+		cin.ignore(numeric_limits<int>::max(), '\n');
+		cout << endl;
+		cout << "Enter the book author : ";
+		cin >> appBook.Author;
+		cin.ignore(numeric_limits<int>::max(), '\n');
+		cout << endl;
+		cout << "Enter the book price : ";
+		cin >> appBook.Price;
+		cin.ignore(numeric_limits<int>::max(), '\n');
+		cout << endl;
+		cout << "Enter the books quantity : ";
+		cin >> appBook.Quantity;
+		cin.ignore(numeric_limits<int>::max(), '\n');
+		cout << endl;
+
+		fstream fileOut;
+		fileOut.open(fileName, iostream::out | iostream::binary | iostream::app); //добавление в фаил без редактирования 
+		fileOut.write(reinterpret_cast<char*>(&appBook), BookDataSize);
+		fileOut.close();
+
+		system("pause");
+		system("cls");
+		main();
+	}
+	else if (mode == 2)
+	{
+		//fileOut.open(FileName, iostream::out | iostream::binary | iostream::ate | iostream::in); //редактирование ]
+		system("cls");
+
+		Book appBooked;
+		cout << "You have chosen Edit mode." << endl;
+		cout << "Enter the Id of Booklist" << endl;
+		int bookedId = 0;
+		cin >> bookedId;
+		cin.ignore(numeric_limits<int>::max(), '\n');
+		cout << endl;
+
+		Search(bookedId);
+
+		appBooked.Id = bookedId;
+		cout << endl << "Enter the new title : ";
+		cin >> appBooked.Title;
+		cin.ignore(numeric_limits<int>::max(), '\n');
+		cout << endl;
+		cout << "Enter the new book author : ";
+		cin >> appBooked.Author;
+		cin.ignore(numeric_limits<int>::max(), '\n');
+		cout << endl;
+		cout << "Enter the new book price : ";
+		cin >> appBooked.Price;
+		cin.ignore(numeric_limits<int>::max(), '\n');
+		cout << endl;
+		cout << "Enter the new books quantity : ";
+		cin >> appBooked.Quantity;
+		cin.ignore(numeric_limits<int>::max(), '\n');
+		cout << endl;
+
+		fstream fileOut;
+		fileOut.open(fileName, ios::out | ios::binary | ios::ate | ios::in); //добавление в фаил без редактирования 
+		fileOut.seekg((bookedId - 1) * BookDataSize);
+		fileOut.write(reinterpret_cast<char*>(&appBooked), BookDataSize);
+		fileOut.close();
+
+		system("pause");
+		system("cls");
+		main();
+	}
+	else if (mode == 3)
+	{
+		system("cls");
+
+		char stringToFind[Book::BUFFER_SIZE];
+		cout << "Write the Booklist name : ";
+		cin >> stringToFind;
+		cin.ignore(numeric_limits<int>::max(), '\n');
+		cout << endl;
+
+		ifstream GetTitele;
+		Book reader;
+
+		GetTitele.open(fileName, ios::binary);
+		for (int i = 0; i < GetIdForEdit(); ++i)
+		{
+			GetTitele.seekg(i * BookDataSize);
+			GetTitele.read(reinterpret_cast<char*>(&reader), BookDataSize);
+			if (strcmp(reader.Title, stringToFind) == 0)
+			{
+				Search(i + 1);
+			}
+		}
+		GetTitele.close();
+
+		system("pause");
+		system("cls");
+		main();
+	}
+	else if (mode == 4)
+	{
+		system("cls");
+		cout << "loading..." << endl;
+		//сортировка по автору
+		Book* sorted = new Book[GetIdForEdit()];
+		ifstream getBooklist;
+		int lenghtoflist = GetIdForEdit();
+		getBooklist.open(fileName, ios::binary);
+		for (int i = 0; i < lenghtoflist; ++i)
+		{
+			getBooklist.seekg(i * BookDataSize);
+			getBooklist.read(reinterpret_cast<char*>(&sorted[i]), BookDataSize);
+		}
+		getBooklist.close();
+		system("cls");
+
+		for (int i = 0; i < lenghtoflist - 1; ++i)
+		{
+			for (int j = 0; j < lenghtoflist - 1 - i; ++j)
+			{
+				if (strcmp(sorted[j].Author, sorted[j + 1].Author) > 0)
+				{
+					Book temp = sorted[j];
+					sorted[j] = sorted[j + 1];
+					sorted[j + 1] = temp;
+				}
+
+			}
+		}
+
+		for (int i = 0; i < lenghtoflist; ++i)
+		{
+			cout << "Author : " << sorted[i].Author << endl;
+			cout << "Id : " << sorted[i].Id << endl;
+			cout << "Title : " << sorted[i].Title << endl;
+			cout << "Price : " << sorted[i].Price << endl;
+			cout << "Quantity : " << sorted[i].Quantity << endl << endl;
+		}
+
+		//cout << "Sorry, mode sort isn't finished yet" << endl;
+		system("pause");
+		system("cls");
+		main();
+	}
+	else if (mode == 5)
+	{
+		system("cls");
+
+		float priceS = 0;
+		int quantityS = 0;
+		ifstream GetTitele;
+		Book reader;
+
+		GetTitele.open(fileName, ios::binary);
+		for (int i = 0; i < GetIdForEdit(); ++i)
+		{
+			GetTitele.seekg(i * BookDataSize);
+			GetTitele.read(reinterpret_cast<char*>(&reader), BookDataSize);
+			quantityS += reader.Quantity;
+			priceS += reader.Price * quantityS;
+		}
+		GetTitele.close();
+
+		cout << "Total price : " << priceS << endl << "Total quantity : " << quantityS << endl;
+
+		system("pause");
+		system("cls");
+		main();
+	}
+	else if (mode == 10101)
+	{
+		Search(10101);
+		system("pause");
+		system("cls");
+		main();
+	}
+	else if (mode == 0)
+	{
+		return 0;
+	}
+	else
+	{
+		system("cls");
+		main();
+	}
+}
+int GetIdForEdit()
+{
+	std::ifstream idIn;
+	idIn.open(fileName, std::ios::binary);
+	idIn.seekg(0, std::ios_base::end);
+	int size = idIn.tellg();
+	idIn.seekg(size - BookDataSize);
+	Book bookid;
+	int temp = 0;
+	idIn.read(reinterpret_cast<char*>(&bookid), BookDataSize);
+	temp = bookid.Id;
+	idIn.close();
+
+	return temp;
+}
+void Search(int a)
+{
+	if (a == 10101)
+	{
+		cout << "Input the Book Id: ";
+		int bookId = 0;
+		cin >> bookId;
+		cin.ignore(numeric_limits<int>::max(), '\n'); //ограничение буффера(чистка)
+		cout << endl;
+		if (bookId - 1 < 0)
+			bookId = 1;
+		ifstream LookinForBookId;
+		LookinForBookId.open(fileName, ios::binary);
+		Book currentBook;
+		LookinForBookId.seekg((bookId - 1) * BookDataSize);
+		LookinForBookId.read(reinterpret_cast<char*>(&currentBook), BookDataSize);
+		LookinForBookId.close();
+		cout << "Your Book date is : " << endl;
+		cout << "Id : " << currentBook.Id << endl;
+		cout << "Title : " << currentBook.Title << endl;
+		cout << "Author : " << currentBook.Author << endl;
+		cout << "Price : " << currentBook.Price << endl;
+		cout << "Quantity : " << currentBook.Quantity << endl;
+	}
+	else if (a != 0)
+	{
+		if (a - 1 < 0)
+		{
+			a = 1;
+		}
+		ifstream LookinForBookId;
+		LookinForBookId.open(fileName, ios::binary);
+		Book currentBook;
+		LookinForBookId.seekg((a - 1) * BookDataSize);
+		LookinForBookId.read(reinterpret_cast<char*>(&currentBook), BookDataSize);
+		LookinForBookId.close();
+		cout << "Your Book date is : " << endl;
+		cout << "Id : " << currentBook.Id << endl;
+		cout << "Title : " << currentBook.Title << endl;
+		cout << "Author : " << currentBook.Author << endl;
+		cout << "Price : " << currentBook.Price << endl;
+		cout << "Quantity : " << currentBook.Quantity << endl;
+	}
+}
