@@ -28,7 +28,7 @@ const std::string fileName = "books.bin";
 int main()
 {
 	setlocale(0, "");
-	cout << "Выберите режим : " << endl << "1 - Добавить голос;" << endl << "0 - закрыть программу" << endl << "3 - Поиск по паспорту" << endl << "4 - Сортировка по фамилии" << endl;
+	cout << "Выберите режим : " << endl << "1 - Добавить голос;" << endl << "0 - закрыть программу" << endl;
 	int mode = 0;
 	cin >> mode;
 	cin.ignore(numeric_limits<int>::max(), '\n');
@@ -77,6 +77,7 @@ int main()
 	}
 	if (mode == 1123457)
     {
+		system("cls");
 		admin();
     }
 	else if (mode == 0)
@@ -221,6 +222,7 @@ int admin()
 	}
 	else if (mod == 4)
 	{
+		system("cls");
 		Search(10101);
 		system("pause");
 		system("cls");
@@ -228,7 +230,9 @@ int admin()
 	}
 	else if (mod == 0)
 	{
+		system("cls");
 		return 0;
+		main();
 	}
 	else
 	{
