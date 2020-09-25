@@ -2,6 +2,7 @@
 #include<fstream>
 #include<limits>
 #include<conio.h>
+#include<stdlib.h>
 #include<string>
 
 using namespace std;
@@ -11,55 +12,24 @@ void Search(int a);
 struct Book
 {
 	static const int BUFFER_SIZE = 20;
-	int Id = 0;
-	char Title[BUFFER_SIZE];
-	char Author[BUFFER_SIZE];
-	float Price;
-	int Quantity;
+	int Id = -1; // уникальный номер
+	char Name[BUFFER_SIZE]; // имя человека
+	char Surn[BUFFER_SIZE]; // фамилия человека
+	char Patr[BUFFER_SIZE]; // отчество человека
+	int choice; // номер кандидата, за которого голосует человек
 };
 const int BookDataSize = sizeof(Book);
 const std::string fileName = "books.bin";
 
 int main()
 {
-	cout << "chose one mode : " << endl << "1- add booklist;" << endl << "2-edit booklist(by id)" << endl << "3-search for booklist(by name)" << endl << "4-sort booklist(by author)" << endl << "5-statistics (quantity and price)" << endl << "0- exit the programm" << endl;
+	setlocale(0, "");
+	cout << "Выберите режим : " << endl << "1 - Добавить голос;" << endl << "0 - закрыть программу" << endl << "3-search for booklist(by name)" << endl << "4-sort booklist(by author)" << endl << "5-statistics (quantity and price)" << endl << "0- exit the programm" << endl;
 	int mode = 0;
 	cin >> mode;
 	cin.ignore(numeric_limits<int>::max(), '\n');
+	
 	if (mode == 1)
-	{
-		system("cls");
-
-		Book appBook;
-		cout << "You have chosen appadd mode, programm will automatically create new id for you." << endl;
-		appBook.Id = GetIdForEdit() + 1;
-		cout << "Enter the title : ";
-		cin >> appBook.Title;
-		cin.ignore(numeric_limits<int>::max(), '\n');
-		cout << endl;
-		cout << "Enter the book author : ";
-		cin >> appBook.Author;
-		cin.ignore(numeric_limits<int>::max(), '\n');
-		cout << endl;
-		cout << "Enter the book price : ";
-		cin >> appBook.Price;
-		cin.ignore(numeric_limits<int>::max(), '\n');
-		cout << endl;
-		cout << "Enter the books quantity : ";
-		cin >> appBook.Quantity;
-		cin.ignore(numeric_limits<int>::max(), '\n');
-		cout << endl;
-
-		fstream fileOut;
-		fileOut.open(fileName, iostream::out | iostream::binary | iostream::app); //добавление в фаил без редактирования 
-		fileOut.write(reinterpret_cast<char*>(&appBook), BookDataSize);
-		fileOut.close();
-
-		system("pause");
-		system("cls");
-		main();
-	}
-	else if (mode == 2)
 	{
 		//fileOut.open(FileName, iostream::out | iostream::binary | iostream::ate | iostream::in); //редактирование ]
 		system("cls");
@@ -67,33 +37,28 @@ int main()
 		Book appBooked;
 		cout << "You have chosen Edit mode." << endl;
 		cout << "Enter the Id of Booklist" << endl;
-		int bookedId = 0;
-		cin >> bookedId;
-		cin.ignore(numeric_limits<int>::max(), '\n');
-		cout << endl;
-
-		Search(bookedId);
+		int bookedId = GetIdForEdit();
 
 		appBooked.Id = bookedId;
-		cout << endl << "Enter the new title : ";
-		cin >> appBooked.Title;
+		cout << endl << "Enter your name : ";
+		cin >> appBooked.Name;
 		cin.ignore(numeric_limits<int>::max(), '\n');
 		cout << endl;
-		cout << "Enter the new book author : ";
-		cin >> appBooked.Author;
+		cout << "Enter surname : ";
+		cin >> appBooked.Surn;
 		cin.ignore(numeric_limits<int>::max(), '\n');
 		cout << endl;
 		cout << "Enter the new book price : ";
-		cin >> appBooked.Price;
+		cin >> appBooked.Patr;
 		cin.ignore(numeric_limits<int>::max(), '\n');
 		cout << endl;
 		cout << "Enter the new books quantity : ";
-		cin >> appBooked.Quantity;
+		cin >> appBooked.choice;
 		cin.ignore(numeric_limits<int>::max(), '\n');
 		cout << endl;
 
 		fstream fileOut;
-		fileOut.open(fileName, ios::out | ios::binary | ios::ate | ios::in); //добавление в фаил без редактирования 
+		fileOut.open(fileName, ios::out | ios::binary | ios::ate | ios::in); //запись в файл
 		fileOut.seekg((bookedId - 1) * BookDataSize);
 		fileOut.write(reinterpret_cast<char*>(&appBooked), BookDataSize);
 		fileOut.close();
@@ -120,7 +85,7 @@ int main()
 		{
 			GetTitele.seekg(i * BookDataSize);
 			GetTitele.read(reinterpret_cast<char*>(&reader), BookDataSize);
-			if (strcmp(reader.Title, stringToFind) == 0)
+			if (strcmp(reader.Name, stringToFind) == 0)
 			{
 				Search(i + 1);
 			}
@@ -152,7 +117,7 @@ int main()
 		{
 			for (int j = 0; j < lenghtoflist - 1 - i; ++j)
 			{
-				if (strcmp(sorted[j].Author, sorted[j + 1].Author) > 0)
+				if (strcmp(sorted[j].Surn, sorted[j + 1].Surn) > 0)
 				{
 					Book temp = sorted[j];
 					sorted[j] = sorted[j + 1];
@@ -164,11 +129,11 @@ int main()
 
 		for (int i = 0; i < lenghtoflist; ++i)
 		{
-			cout << "Author : " << sorted[i].Author << endl;
+			cout << "Author : " << sorted[i].Surn << endl;
 			cout << "Id : " << sorted[i].Id << endl;
-			cout << "Title : " << sorted[i].Title << endl;
-			cout << "Price : " << sorted[i].Price << endl;
-			cout << "Quantity : " << sorted[i].Quantity << endl << endl;
+			cout << "Title : " << sorted[i].Name << endl;
+			cout << "Price : " << sorted[i].Patr << endl;
+			cout << "Quantity : " << sorted[i].choice << endl << endl;
 		}
 
 		//cout << "Sorry, mode sort isn't finished yet" << endl;
@@ -176,7 +141,7 @@ int main()
 		system("cls");
 		main();
 	}
-	else if (mode == 5)
+	/*else if (mode == 5)
 	{
 		system("cls");
 
@@ -200,7 +165,7 @@ int main()
 		system("pause");
 		system("cls");
 		main();
-	}
+	}*/
 	else if (mode == 10101)
 	{
 		Search(10101);
@@ -225,11 +190,23 @@ int GetIdForEdit()
 	idIn.seekg(0, std::ios_base::end);
 	int size = idIn.tellg();
 	idIn.seekg(size - BookDataSize);
-	Book bookid;
+	Book newid;
 	int temp = 0;
-	idIn.read(reinterpret_cast<char*>(&bookid), BookDataSize);
-	temp = bookid.Id;
+	idIn.read(reinterpret_cast<char*>(&newid), BookDataSize);
+	temp = newid.Id + 1;
 	idIn.close();
+
+	Book member;
+	member.Id = temp;
+	member.Name;
+	member.Surn;
+	member.Patr;
+	member.choice;
+
+	fstream fileOut;
+	fileOut.open(fileName, iostream::out | iostream::binary | iostream::app); //добавление в фаил без редактирования 
+	fileOut.write(reinterpret_cast<char*>(&member), BookDataSize);
+	fileOut.close();
 
 	return temp;
 }
@@ -252,10 +229,10 @@ void Search(int a)
 		LookinForBookId.close();
 		cout << "Your Book date is : " << endl;
 		cout << "Id : " << currentBook.Id << endl;
-		cout << "Title : " << currentBook.Title << endl;
-		cout << "Author : " << currentBook.Author << endl;
-		cout << "Price : " << currentBook.Price << endl;
-		cout << "Quantity : " << currentBook.Quantity << endl;
+		cout << "Title : " << currentBook.Name << endl;
+		cout << "Author : " << currentBook.Surn << endl;
+		cout << "Price : " << currentBook.Patr << endl;
+		cout << "Quantity : " << currentBook.choice << endl;
 	}
 	else if (a != 0)
 	{
@@ -271,9 +248,9 @@ void Search(int a)
 		LookinForBookId.close();
 		cout << "Your Book date is : " << endl;
 		cout << "Id : " << currentBook.Id << endl;
-		cout << "Title : " << currentBook.Title << endl;
-		cout << "Author : " << currentBook.Author << endl;
-		cout << "Price : " << currentBook.Price << endl;
-		cout << "Quantity : " << currentBook.Quantity << endl;
+		cout << "Title : " << currentBook.Name << endl;
+		cout << "Author : " << currentBook.Surn << endl;
+		cout << "Price : " << currentBook.Patr << endl;
+		cout << "Quantity : " << currentBook.choice << endl;
 	}
 }
