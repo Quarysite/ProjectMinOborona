@@ -13,7 +13,7 @@ void Search(int a);
 struct Book
 {
 	static const int BUFFER_SIZE = 20;
-	int Id = -1; // уникальный номер
+	int Id = 0; // уникальный номер
 	char Name[BUFFER_SIZE]; // имя человека
 	char Surn[BUFFER_SIZE]; // фамилия человека
 	char Patr[BUFFER_SIZE]; // отчество человека
@@ -23,14 +23,15 @@ struct Book
 const int BookDataSize = sizeof(Book);
 const std::string fileName = "books.bin";
 
+//основной режим
 int main()
 {
 	setlocale(0, "");
-	cout << "Выберите режим : " << endl << "1 - Добавить голос;" << endl << "0 - закрыть программу" << endl << "3 - Поиск по паспорту" << endl << "4 - Сортировка по фамилии" << endl  << "0 - Закрыть программу" << endl;
+	cout << "Выберите режим : " << endl << "1 - Добавить голос;" << endl << "0 - закрыть программу" << endl << "3 - Поиск по паспорту" << endl << "4 - Сортировка по фамилии" << endl;
 	int mode = 0;
 	cin >> mode;
 	cin.ignore(numeric_limits<int>::max(), '\n');
-	
+
 	if (mode == 1)
 	{
 		//fileOut.open(FileName, iostream::out | iostream::binary | iostream::ate | iostream::in); //редактирование ]
@@ -55,7 +56,7 @@ int main()
 		cin.ignore(numeric_limits<int>::max(), '\n');
 		cout << endl;
 		cout << "Введите номер паспорта (без пробелов слитно) : ";
-		cin >> appBooked.Patr;
+		cin >> appBooked.Pasport;
 		cin.ignore(numeric_limits<int>::max(), '\n');
 		cout << endl;
 		cout << "Ведите номер кандидата за которого будете голосовать (Кандидат А- 1, Кадидат Б- 2, Кадидат В- 3, Кандидат Г- 4, Кандидат Д- 5) : ";
@@ -73,7 +74,77 @@ int main()
 		system("cls");
 		main();
 	}
-	else if (mode == 3)
+	if (mode == 1123457)
+    {
+		admin();
+    }
+	else if (mode == 0)
+	{
+		return 0;
+	}
+	else
+	{
+		system("cls");
+		main();
+	}
+}
+
+//дополнительные возможности(режим админ)
+int admin()
+{
+	cout << "Выберите режим : " << endl << "0 - выйти из режима администратора" << endl << "1 - изменение данных участника по Id" << endl << "2 - Поиск по паспорту" << endl << "3 - Сортировка по фамилии" << endl << "4 - Поиск по Id" << endl;
+	int mod = 0;
+	cin >> mod;
+	cin.ignore(numeric_limits<int>::max(), '\n');
+	
+	if (mod == 1)
+	{
+		//fileOut.open(FileName, iostream::out | iostream::binary | iostream::ate | iostream::in); //редактирование ]
+		system("cls");
+
+		Book appBooked;
+		cout << "You have chosen Edit mode." << endl;
+		cout << "Введите Id для редактирования" << endl;
+		int bookedId = 0;
+		cin >> bookedId;
+		cin.ignore(numeric_limits<int>::max(), '\n');
+		cout << endl;
+
+		Search(bookedId);
+
+		appBooked.Id = bookedId;
+		cout << endl << "Введите ваше имя : ";
+		cin >> appBooked.Name;
+		cin.ignore(numeric_limits<int>::max(), '\n');
+		cout << endl;
+		cout << "Введите вашу фамилию : ";
+		cin >> appBooked.Surn;
+		cin.ignore(numeric_limits<int>::max(), '\n');
+		cout << endl;
+		cout << "Введите ваше отчество : ";
+		cin >> appBooked.Patr;
+		cin.ignore(numeric_limits<int>::max(), '\n');
+		cout << endl;
+		cout << "Введите номер паспорта (без пробелов слитно) : ";
+		cin >> appBooked.Pasport;
+		cin.ignore(numeric_limits<int>::max(), '\n');
+		cout << endl;
+		cout << "Ведите номер кандидата за которого будете голосовать (Кандидат А- 1, Кадидат Б- 2, Кадидат В- 3, Кандидат Г- 4, Кандидат Д- 5) : ";
+		cin >> appBooked.choice;
+		cin.ignore(numeric_limits<int>::max(), '\n');
+		cout << endl;
+
+		fstream fileOut;
+		fileOut.open(fileName, ios::out | ios::binary | ios::ate | ios::in); //добавление в фаил без редактирования 
+		fileOut.seekg((bookedId - 1) * BookDataSize);
+		fileOut.write(reinterpret_cast<char*>(&appBooked), BookDataSize);
+		fileOut.close();
+
+		system("pause");
+		system("cls");
+		admin();
+	}
+	else if (mod == 2)
 	{
 		system("cls");
 
@@ -100,9 +171,9 @@ int main()
 
 		system("pause");
 		system("cls");
-		main();
+		admin();
 	}
-	else if (mode == 4)
+	else if (mod == 3)
 	{
 		system("cls");
 		cout << "loading..." << endl;
@@ -139,32 +210,33 @@ int main()
 			cout << "Фамилия : " << sorted[i].Surn << endl;
 			cout << "Имя : " << sorted[i].Name << endl;
 			cout << "Отчество : " << sorted[i].Patr << endl;
-			cout << "Паспорт : " << sorted[i].Pasport<< endl << endl;
+			cout << "Паспорт : " << sorted[i].Pasport << endl << endl;
 			cout << "Голос за кандидата : " << sorted[i].choice << endl << endl;
 		}
 
 		system("pause");
 		system("cls");
-		main();
+		admin();
 	}
-	
-	else if (mode == 10101)
+	else if (mod == 4)
 	{
 		Search(10101);
 		system("pause");
 		system("cls");
-		main();
+		admin();
 	}
-	else if (mode == 0)
+	else if (mod == 0)
 	{
 		return 0;
 	}
 	else
 	{
 		system("cls");
-		main();
+		admin();
 	}
 }
+
+// функции
 int GetIdForEditionalVer()
 {
 	std::ifstream idIn;
