@@ -6,6 +6,7 @@
 #include<string>
 
 using namespace std;
+int admin();
 int GetIdForEdit();
 int GetIdForEditionalVer();
 void Search(int a);
