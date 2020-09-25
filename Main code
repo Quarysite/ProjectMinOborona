@@ -42,19 +42,23 @@ int main()
 		int bookedId = GetIdForEditionalVer();
 
 		appBooked.Id = bookedId;
-		cout << endl << "Enter your name : ";
+		cout << endl << "Введите ваше имя : ";
 		cin >> appBooked.Name;
 		cin.ignore(numeric_limits<int>::max(), '\n');
 		cout << endl;
-		cout << "Enter surname : ";
+		cout << "Введите вашу фамилию : ";
 		cin >> appBooked.Surn;
 		cin.ignore(numeric_limits<int>::max(), '\n');
 		cout << endl;
-		cout << "Enter the new book price : ";
+		cout << "Введите ваше отчество : ";
 		cin >> appBooked.Patr;
 		cin.ignore(numeric_limits<int>::max(), '\n');
 		cout << endl;
-		cout << "Enter the new books quantity : ";
+		cout << "Введите номер паспорта (без пробелов слитно) : ";
+		cin >> appBooked.Patr;
+		cin.ignore(numeric_limits<int>::max(), '\n');
+		cout << endl;
+		cout << "Ведите номер кандидата за которого будете голосовать (Кандидат А- 1, Кадидат Б- 2, Кадидат В- 3, Кандидат Г- 4, Кандидат Д- 5) : ";
 		cin >> appBooked.choice;
 		cin.ignore(numeric_limits<int>::max(), '\n');
 		cout << endl;
@@ -179,6 +183,7 @@ int GetIdForEditionalVer()
 	member.Name;
 	member.Surn;
 	member.Patr;
+	member.Pasport;
 	member.choice;
 
 	fstream fileOut;
@@ -225,6 +230,7 @@ void Search(int a)
 		cout << "Имя : " << currentBook.Name << endl;
 		cout << "Фамилия : " << currentBook.Surn << endl;
 		cout << "Отчество : " << currentBook.Patr << endl;
+		cout << "Паспорт : " << currentBook.Pasport << endl;
 		cout << "Номер кандидата : " << currentBook.choice << endl;
 	}
 	else if (a != 0)
@@ -239,11 +245,12 @@ void Search(int a)
 		LookinForBookId.seekg((a - 1) * BookDataSize);
 		LookinForBookId.read(reinterpret_cast<char*>(&currentBook), BookDataSize);
 		LookinForBookId.close();
-		cout << "Your Book date is : " << endl;
+		cout << "Данные голосуещего : " << endl;
 		cout << "Id : " << currentBook.Id << endl;
-		cout << "Title : " << currentBook.Name << endl;
-		cout << "Author : " << currentBook.Surn << endl;
-		cout << "Price : " << currentBook.Patr << endl;
-		cout << "Quantity : " << currentBook.choice << endl;
+		cout << "Имя : " << currentBook.Name << endl;
+		cout << "Фамилия : " << currentBook.Surn << endl;
+		cout << "Отчество : " << currentBook.Patr << endl;
+		cout << "Паспорт : " << currentBook.Pasport << endl;
+		cout << "Номер кандидата : " << currentBook.choice << endl;
 	}
 }
