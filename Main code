@@ -7,6 +7,7 @@
 
 using namespace std;
 int GetIdForEdit();
+int GetIdForEditionalVer();
 void Search(int a);
 
 struct Book
@@ -16,6 +17,7 @@ struct Book
 	char Name[BUFFER_SIZE]; // имя человека
 	char Surn[BUFFER_SIZE]; // фамилия человека
 	char Patr[BUFFER_SIZE]; // отчество человека
+	char Pasport[BUFFER_SIZE]; // номер паспорта
 	int choice; // номер кандидата, за которого голосует человек
 };
 const int BookDataSize = sizeof(Book);
@@ -24,7 +26,7 @@ const std::string fileName = "books.bin";
 int main()
 {
 	setlocale(0, "");
-	cout << "Выберите режим : " << endl << "1 - Добавить голос;" << endl << "0 - закрыть программу" << endl << "3-search for booklist(by name)" << endl << "4-sort booklist(by author)" << endl << "5-statistics (quantity and price)" << endl << "0- exit the programm" << endl;
+	cout << "Выберите режим : " << endl << "1 - Добавить голос;" << endl << "0 - закрыть программу" << endl << "3 - Поиск по паспорту" << endl << "4 - Сортировка по фамилии" << endl  << "0 - Закрыть программу" << endl;
 	int mode = 0;
 	cin >> mode;
 	cin.ignore(numeric_limits<int>::max(), '\n');
@@ -37,7 +39,7 @@ int main()
 		Book appBooked;
 		cout << "You have chosen Edit mode." << endl;
 		cout << "Enter the Id of Booklist" << endl;
-		int bookedId = GetIdForEdit();
+		int bookedId = GetIdForEditionalVer();
 
 		appBooked.Id = bookedId;
 		cout << endl << "Enter your name : ";
@@ -72,7 +74,7 @@ int main()
 		system("cls");
 
 		char stringToFind[Book::BUFFER_SIZE];
-		cout << "Write the Booklist name : ";
+		cout << "Введите номер паспорта : ";
 		cin >> stringToFind;
 		cin.ignore(numeric_limits<int>::max(), '\n');
 		cout << endl;
@@ -85,7 +87,7 @@ int main()
 		{
 			GetTitele.seekg(i * BookDataSize);
 			GetTitele.read(reinterpret_cast<char*>(&reader), BookDataSize);
-			if (strcmp(reader.Name, stringToFind) == 0)
+			if (strcmp(reader.Pasport, stringToFind) == 0)
 			{
 				Search(i + 1);
 			}
@@ -100,7 +102,7 @@ int main()
 	{
 		system("cls");
 		cout << "loading..." << endl;
-		//сортировка по автору
+		//сортировка по Фамилии
 		Book* sorted = new Book[GetIdForEdit()];
 		ifstream getBooklist;
 		int lenghtoflist = GetIdForEdit();
@@ -129,43 +131,19 @@ int main()
 
 		for (int i = 0; i < lenghtoflist; ++i)
 		{
-			cout << "Author : " << sorted[i].Surn << endl;
 			cout << "Id : " << sorted[i].Id << endl;
-			cout << "Title : " << sorted[i].Name << endl;
-			cout << "Price : " << sorted[i].Patr << endl;
-			cout << "Quantity : " << sorted[i].choice << endl << endl;
+			cout << "Фамилия : " << sorted[i].Surn << endl;
+			cout << "Имя : " << sorted[i].Name << endl;
+			cout << "Отчество : " << sorted[i].Patr << endl;
+			cout << "Паспорт : " << sorted[i].Pasport<< endl << endl;
+			cout << "Голос за кандидата : " << sorted[i].choice << endl << endl;
 		}
 
-		//cout << "Sorry, mode sort isn't finished yet" << endl;
 		system("pause");
 		system("cls");
 		main();
 	}
-	/*else if (mode == 5)
-	{
-		system("cls");
-
-		float priceS = 0;
-		int quantityS = 0;
-		ifstream GetTitele;
-		Book reader;
-
-		GetTitele.open(fileName, ios::binary);
-		for (int i = 0; i < GetIdForEdit(); ++i)
-		{
-			GetTitele.seekg(i * BookDataSize);
-			GetTitele.read(reinterpret_cast<char*>(&reader), BookDataSize);
-			quantityS += reader.Quantity;
-			priceS += reader.Price * quantityS;
-		}
-		GetTitele.close();
-
-		cout << "Total price : " << priceS << endl << "Total quantity : " << quantityS << endl;
-
-		system("pause");
-		system("cls");
-		main();
-	}*/
+	
 	else if (mode == 10101)
 	{
 		Search(10101);
@@ -183,7 +161,7 @@ int main()
 		main();
 	}
 }
-int GetIdForEdit()
+int GetIdForEditionalVer()
 {
 	std::ifstream idIn;
 	idIn.open(fileName, std::ios::binary);
@@ -210,6 +188,21 @@ int GetIdForEdit()
 
 	return temp;
 }
+int GetIdForEdit()
+{
+	std::ifstream idIn;
+	idIn.open(fileName, std::ios::binary);
+	idIn.seekg(0, std::ios_base::end);
+	int size = idIn.tellg();
+	idIn.seekg(size - BookDataSize);
+	Book newid;
+	int temp = 0;
+	idIn.read(reinterpret_cast<char*>(&newid), BookDataSize);
+	temp = newid.Id;
+	idIn.close();
+
+	return temp;
+}
 void Search(int a)
 {
 	if (a == 10101)
@@ -227,12 +220,12 @@ void Search(int a)
 		LookinForBookId.seekg((bookId - 1) * BookDataSize);
 		LookinForBookId.read(reinterpret_cast<char*>(&currentBook), BookDataSize);
 		LookinForBookId.close();
-		cout << "Your Book date is : " << endl;
+		cout << "Данные голосуещего : " << endl;
 		cout << "Id : " << currentBook.Id << endl;
-		cout << "Title : " << currentBook.Name << endl;
-		cout << "Author : " << currentBook.Surn << endl;
-		cout << "Price : " << currentBook.Patr << endl;
-		cout << "Quantity : " << currentBook.choice << endl;
+		cout << "Имя : " << currentBook.Name << endl;
+		cout << "Фамилия : " << currentBook.Surn << endl;
+		cout << "Отчество : " << currentBook.Patr << endl;
+		cout << "Номер кандидата : " << currentBook.choice << endl;
 	}
 	else if (a != 0)
 	{
