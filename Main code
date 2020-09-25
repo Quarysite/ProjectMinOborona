@@ -21,8 +21,9 @@ struct Book
 	char Pasport[BUFFER_SIZE]; // номер паспорта
 	int choice; // номер кандидата, за которого голосует человек
 };
+
 const int BookDataSize = sizeof(Book);
-const std::string fileName = "books.bin";
+const std::string fileName = "vote.bin";
 
 //основной режим
 int main()
@@ -331,3 +332,4 @@ void Search(int a)
 		cout << "Номер кандидата : " << currentBook.choice << endl;
 	}
 }
+
