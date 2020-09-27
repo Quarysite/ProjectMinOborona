@@ -95,7 +95,7 @@ int main()
 //дополнительные возможности(режим админ)
 int admin()
 {
-	cout << "Выберите режим : " << endl << "0 - выйти из режима администратора" << endl << "1 - изменение данных участника по Id" << endl << "2 - Поиск по паспорту" << endl << "3 - Сортировка по фамилии" << endl << "4 - Поиск по Id" << endl;
+	cout << "Выберите режим : " << endl << "0 - выйти из режима администратора" << endl << "1 - изменение данных участника по Id" << endl << "2 - Поиск по паспорту" << endl << "3 - Сортировка по фамилии" << endl << "4 - Поиск по Id" << endl << "5 - Подсчет голосования" << endl;
 	int mod = 0;
 	cin >> mod;
 	cin.ignore(numeric_limits<int>::max(), '\n');
@@ -229,6 +229,46 @@ int admin()
 		system("cls");
 		admin();
 	}
+	else if (mod == 5)
+	{
+		system("cls");
+
+		float quantity1 = 0;
+		float quantity2 = 0;
+		float quantity3 = 0;
+		float quantity4 = 0;
+		float quantity5 = 0;
+		ifstream GetTitele;
+		Book reader;
+
+		GetTitele.open(fileName, ios::binary);
+		for (int i = 0; i < GetIdForEdit(); ++i)
+		{
+			GetTitele.seekg(i * BookDataSize);
+			GetTitele.read(reinterpret_cast<char*>(&reader), BookDataSize);
+			if(reader.choice == 1)
+				quantity1 +=1;
+			else if(reader.choice == 2)
+				quantity2 += 1;
+			else if (reader.choice == 3)
+				quantity3 += 1;
+			else if (reader.choice == 4)
+				quantity4 += 1;
+			else if (reader.choice == 5)
+				quantity5 += 1;
+		}
+		GetTitele.close();
+
+		cout << "Таблица голосования : " << endl << "За кандидата А проголосовали : " << (quantity1/GetIdForEdit()) * 100 << " % голосовавших" << endl
+			<< "За кандидата Б проголосовали : " << (quantity2 / GetIdForEdit()) * 100 << " % голосовавших" << endl
+			<< "За кандидата В проголосовали : " << (quantity3 / GetIdForEdit()) * 100 << " % голосовавших" << endl
+			<< "За кандидата Г проголосовали : " << (quantity4 / GetIdForEdit()) * 100 << " % голосовавших" << endl
+			<< "За кандидата Д проголосовали : " << (quantity5 / GetIdForEdit()) * 100 << " % голосовавших" << endl;
+
+		system("pause");
+		system("cls");
+		admin();
+	}
 	else if (mod == 0)
 	{
 		system("cls");
@@ -332,4 +372,3 @@ void Search(int a)
 		cout << "Номер кандидата : " << currentBook.choice << endl;
 	}
 }
-
